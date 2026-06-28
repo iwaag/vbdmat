@@ -55,15 +55,23 @@ selected integration environment before that proof is implemented.
 
 ## Current package
 
-The initial package is deliberately minimal:
+The package currently exposes the Phase 0 core foundation:
 
 ```text
 src/vbdmat/
+  core/
+    axes.py
+    geometry.py
+    materials.py
+    metadata.py
+    optical_basis.py
+    transforms.py
 tests/
 ```
 
-Architecture and implementation modules will be introduced only after their
-Phase 0 contracts have been recorded as architecture decisions.
+The public core API includes `GridGeometry`, `OpticalBasis`, material palette
+types, `SchemaVersion`, `SchemaIdentity`, and `Provenance`. Volume containers
+and I/O remain intentionally unimplemented until their Phase 0 steps.
 
 ## Phase 0 design contracts
 
