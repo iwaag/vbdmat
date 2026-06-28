@@ -71,6 +71,9 @@ src/vbdmat/
     volumes.py
   fixtures/
     synthetic.py
+  optics/
+    config.py
+    mapping.py
 tests/
 ```
 
@@ -89,6 +92,16 @@ uv run python examples/phase0/inspect_synthetic_fixtures.py
 The fixture set covers homogeneous transparent and white commands, a sharp
 transparent/opaque interface, a layered slab, a two-material mixture ramp, and
 an anisotropic axis marker.
+
+Apply the explicit provisional and uncalibrated Phase 0 optical mapping with:
+
+```bash
+uv run python examples/phase0/map_synthetic_fixtures.py
+```
+
+The reference mapping uses direct label lookup and linear volume-fraction
+mixing. Its assumptions and provisional values are documented in
+[Phase 0 Reference Optical Mapping v1](docs/optics/reference-mapping-v1.md).
 
 ## Phase 0 design contracts
 
