@@ -74,14 +74,23 @@ src/vbdmat/
   optics/
     config.py
     mapping.py
+  io/
+    zarr.py
+  boundaries/
+    interfaces.py
+    policies.py
+  exporters/
+    diagnostics.py
+    mitsuba.py
 tests/
 ```
 
 The public core API includes `GridGeometry`, `OpticalBasis`, material palette
 types, schema and provenance metadata, `MaterialLabelVolume`,
 `MaterialMixtureVolume`, `OpticalPropertyVolume`, and structured volume
-validation errors. Persistence and renderer I/O remain intentionally
-unimplemented until their Phase 0 steps.
+validation errors. Zarr v3 persistence supports failure-safe writes, validated
+full reads, metadata-only inspection, and spatial optical-field reads. Renderer
+I/O remains intentionally unimplemented until its Phase 0 steps.
 
 Generate and inspect the small deterministic Phase 0 fixtures with:
 
@@ -103,12 +112,50 @@ The reference mapping uses direct label lookup and linear volume-fraction
 mixing. Its assumptions and provisional values are documented in
 [Phase 0 Reference Optical Mapping v1](docs/optics/reference-mapping-v1.md).
 
+Inspect a persisted volume without loading array payloads, or generate the
+fixture size and partial-read report:
+
+```bash
+uv run python examples/phase0/inspect_zarr.py path/to/asset.zarr
+uv run python examples/phase0/zarr_fixture_report.py
+```
+
+Derive and inspect sharp refractive-index interfaces from every mapped fixture:
+
+```bash
+uv run python examples/phase0/inspect_ior_interfaces.py
+```
+
+Reproduce the optional Mitsuba IOR API probe with the locked renderer group:
+
+```bash
+uv run --group mitsuba python examples/phase0/probe_mitsuba_ior.py
+```
+
+The probe confirms that heterogeneous-medium spatial IOR is rejected while scalar
+dielectric `int_ior`/`ext_ior` is accepted.
+
+Render all canonical fixture proofs with fixed Mitsuba settings:
+
+```bash
+uv run --group mitsuba python examples/phase0/render_mitsuba_fixtures.py \
+  .local/phase0/mitsuba-step9
+```
+
+Each fixture directory contains EXR/PNG output, oriented boundary PLY files, a scene
+summary, and a machine-readable capability report.
+
 ## Phase 0 design contracts
 
 - [ADR-001: coordinates, axes, units, and sampling](docs/adr/0001-coordinates-axes-units-and-sampling.md)
 - [ADR-002: canonical volume schemas](docs/adr/0002-canonical-volume-schemas.md)
+- [ADR-003: boundaries and refractive index](docs/adr/0003-boundaries-and-refractive-index.md)
+- [ADR-004: Zarr layout and compatibility](docs/adr/0004-zarr-layout-and-compatibility.md)
+- [ADR-005: exporter boundary](docs/adr/0005-exporter-boundary.md)
 - [Logical volume schema 1.0](docs/schemas/volume-schema-v1.md)
 - [Worked schema examples](docs/schemas/examples/)
+- [Phase 0 Zarr fixture report](docs/zarr/phase0-fixture-report.md)
+- [Phase 0 Mitsuba consumer proof](docs/mitsuba/phase0-proof.md)
 
 ## License
 

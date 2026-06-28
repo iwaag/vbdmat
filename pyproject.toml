@@ -28,6 +28,9 @@ openvdb = []
 [tool.pytest.ini_options]
 addopts = ["-ra", "--strict-config", "--strict-markers"]
 testpaths = ["tests"]
+markers = [
+    "mitsuba: optional tests requiring the locked Mitsuba dependency group",
+]
 
 [tool.mypy]
 python_version = "3.11"
