@@ -1,0 +1,41 @@
+[build-system]
+requires = ["uv_build>=0.10.3,<0.11.0"]
+build-backend = "uv_build"
+
+[project]
+name = "vbdmat"
+version = "0.1.0"
+description = "Renderer-independent preprocessing for voxel material optics"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "CC0-1.0"
+dependencies = [
+    "numpy>=1.26",
+    "zarr>=3.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15",
+    "pytest>=8.0",
+    "ruff>=0.11",
+]
+mitsuba = [
+    "mitsuba>=3.6",
+]
+openvdb = []
+
+[tool.pytest.ini_options]
+addopts = ["-ra", "--strict-config", "--strict-markers"]
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "RUF", "SIM", "UP"]
