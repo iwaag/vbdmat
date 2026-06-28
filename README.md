@@ -49,9 +49,9 @@ uv sync --locked --group mitsuba
 uv sync --locked --group openvdb
 ```
 
-The OpenVDB group is initially empty because compatible Python bindings may be
-provided by the host DCC or system installation. Phase 0 will document the
-selected integration environment before that proof is implemented.
+The OpenVDB group is empty because compatible Python bindings and Blender are
+provided by the isolated integration container documented in
+[the OpenVDB/Cycles proof](docs/openvdb/phase0-cycles-proof.md).
 
 ## Current package
 
@@ -82,6 +82,8 @@ src/vbdmat/
   exporters/
     diagnostics.py
     mitsuba.py
+    openvdb.py
+  conformance.py
 tests/
 ```
 
@@ -89,8 +91,8 @@ The public core API includes `GridGeometry`, `OpticalBasis`, material palette
 types, schema and provenance metadata, `MaterialLabelVolume`,
 `MaterialMixtureVolume`, `OpticalPropertyVolume`, and structured volume
 validation errors. Zarr v3 persistence supports failure-safe writes, validated
-full reads, metadata-only inspection, and spatial optical-field reads. Renderer
-I/O remains intentionally unimplemented until its Phase 0 steps.
+full reads, metadata-only inspection, and spatial optical-field reads. Optional
+renderer adapters remain isolated from core imports and dependencies.
 
 Generate and inspect the small deterministic Phase 0 fixtures with:
 
@@ -145,6 +147,19 @@ uv run --group mitsuba python examples/phase0/render_mitsuba_fixtures.py \
 Each fixture directory contains EXR/PNG output, oriented boundary PLY files, a scene
 summary, and a machine-readable capability report.
 
+Run the renderer-independent cross-consumer contract check for every fixture:
+
+```bash
+uv run python examples/phase0/check_cross_consumer_conformance.py \
+  .local/phase0/conformance-step11.json
+```
+
+The command includes an exact Zarr round-trip and both pure adapter conversions. It
+does not require renderer bindings. Optional `--mitsuba-renders` and
+`--cycles-renders` arguments add gross PNG sanity checks without comparing renderer
+pixels for physical equality. See
+[Phase 0 cross-consumer conformance](docs/conformance/phase0-cross-consumer.md).
+
 ## Phase 0 design contracts
 
 - [ADR-001: coordinates, axes, units, and sampling](docs/adr/0001-coordinates-axes-units-and-sampling.md)
@@ -156,6 +171,8 @@ summary, and a machine-readable capability report.
 - [Worked schema examples](docs/schemas/examples/)
 - [Phase 0 Zarr fixture report](docs/zarr/phase0-fixture-report.md)
 - [Phase 0 Mitsuba consumer proof](docs/mitsuba/phase0-proof.md)
+- [Phase 0 OpenVDB/Cycles consumer proof](docs/openvdb/phase0-cycles-proof.md)
+- [Phase 0 cross-consumer conformance](docs/conformance/phase0-cross-consumer.md)
 
 ## License
 
