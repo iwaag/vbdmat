@@ -65,6 +65,13 @@ tests/
 Architecture and implementation modules will be introduced only after their
 Phase 0 contracts have been recorded as architecture decisions.
 
+## Phase 0 design contracts
+
+- [ADR-001: coordinates, axes, units, and sampling](docs/adr/0001-coordinates-axes-units-and-sampling.md)
+- [ADR-002: canonical volume schemas](docs/adr/0002-canonical-volume-schemas.md)
+- [Logical volume schema 1.0](docs/schemas/volume-schema-v1.md)
+- [Worked schema examples](docs/schemas/examples/)
+
 ## License
 
 The repository is dedicated to the public domain under CC0 1.0 Universal. See

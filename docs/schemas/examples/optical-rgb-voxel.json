@@ -1,0 +1,63 @@
+{
+  "schema": {
+    "name": "vbdmat.volume",
+    "version": "1.0.0"
+  },
+  "asset_type": "optical-property",
+  "geometry": {
+    "shape_zyx": [2, 3, 4],
+    "voxel_size_xyz_m": [0.00004, 0.00005, 0.00003],
+    "local_to_world": [
+      [1.0, 0.0, 0.0, 0.01],
+      [0.0, 1.0, 0.0, 0.02],
+      [0.0, 0.0, 1.0, 0.03],
+      [0.0, 0.0, 0.0, 1.0]
+    ]
+  },
+  "optical_basis": {
+    "kind": "rgb",
+    "identifier": "linear-srgb-effective-v1",
+    "coordinates": ["R", "G", "B"],
+    "reference_white": "D65",
+    "observer": "CIE-1931-2deg",
+    "transfer": "linear"
+  },
+  "arrays": {
+    "sigma_a": {
+      "dtype": "float32",
+      "dimensions": ["z", "y", "x", "basis"],
+      "shape": [2, 3, 4, 3],
+      "unit": "m^-1"
+    },
+    "sigma_s": {
+      "dtype": "float32",
+      "dimensions": ["z", "y", "x", "basis"],
+      "shape": [2, 3, 4, 3],
+      "unit": "m^-1"
+    },
+    "g": {
+      "dtype": "float32",
+      "dimensions": ["z", "y", "x"],
+      "shape": [2, 3, 4],
+      "unit": "1"
+    },
+    "ior": {
+      "dtype": "float32",
+      "dimensions": ["z", "y", "x"],
+      "shape": [2, 3, 4],
+      "unit": "1"
+    }
+  },
+  "provenance": {
+    "generator": "vbdmat-phase0-example",
+    "generator_version": "1.0.0"
+  },
+  "worked_example": {
+    "array_index_zyx": [1, 2, 3],
+    "sigma_a_rgb_per_m": [12.0, 8.0, 4.0],
+    "sigma_s_rgb_per_m": [150.0, 160.0, 170.0],
+    "derived_sigma_t_rgb_per_m": [162.0, 168.0, 174.0],
+    "g": 0.25,
+    "ior": 1.49
+  }
+}

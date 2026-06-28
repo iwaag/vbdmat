@@ -1,0 +1,51 @@
+{
+  "schema": {
+    "name": "vbdmat.volume",
+    "version": "1.0.0"
+  },
+  "asset_type": "material-mixture",
+  "geometry": {
+    "shape_zyx": [1, 1, 1],
+    "voxel_size_xyz_m": [0.00004, 0.00004, 0.00003],
+    "local_to_world": [
+      [1.0, 0.0, 0.0, 0.0],
+      [0.0, 1.0, 0.0, 0.0],
+      [0.0, 0.0, 1.0, 0.0],
+      [0.0, 0.0, 0.0, 1.0]
+    ]
+  },
+  "palette": [
+    {
+      "material_id": 0,
+      "name": "air",
+      "role": "background"
+    },
+    {
+      "material_id": 7,
+      "name": "example-resin",
+      "role": "material"
+    }
+  ],
+  "arrays": {
+    "fractions": {
+      "dtype": "float32",
+      "dimensions": ["z", "y", "x", "material"],
+      "shape": [1, 1, 1, 2]
+    },
+    "material_ids": {
+      "dtype": "uint16",
+      "dimensions": ["material"],
+      "shape": [2]
+    }
+  },
+  "provenance": {
+    "generator": "vbdmat-phase0-example",
+    "generator_version": "1.0.0"
+  },
+  "worked_example": {
+    "array_index_zyx": [0, 0, 0],
+    "material_ids": [0, 7],
+    "fractions": [0.25, 0.75],
+    "fraction_sum": 1.0
+  }
+}

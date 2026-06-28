@@ -1,0 +1,48 @@
+{
+  "schema": {
+    "name": "vbdmat.volume",
+    "version": "1.0.0"
+  },
+  "asset_type": "material-label",
+  "geometry": {
+    "shape_zyx": [2, 3, 4],
+    "voxel_size_xyz_m": [0.00004, 0.00005, 0.00003],
+    "local_to_world": [
+      [1.0, 0.0, 0.0, 0.01],
+      [0.0, 1.0, 0.0, 0.02],
+      [0.0, 0.0, 1.0, 0.03],
+      [0.0, 0.0, 0.0, 1.0]
+    ]
+  },
+  "palette": [
+    {
+      "material_id": 0,
+      "name": "air",
+      "role": "background"
+    },
+    {
+      "material_id": 7,
+      "name": "example-resin",
+      "role": "material"
+    }
+  ],
+  "arrays": {
+    "material_id": {
+      "dtype": "uint16",
+      "dimensions": ["z", "y", "x"],
+      "shape": [2, 3, 4]
+    }
+  },
+  "provenance": {
+    "generator": "vbdmat-phase0-example",
+    "generator_version": "1.0.0"
+  },
+  "worked_example": {
+    "array_index_zyx": [1, 2, 3],
+    "semantic_cell_index_xyz": [3, 2, 1],
+    "continuous_index_center_xyz": [3.5, 2.5, 1.5],
+    "local_center_xyz_m": [0.00014, 0.000125, 0.000045],
+    "world_center_xyz_m": [0.01014, 0.020125, 0.030045],
+    "local_extent_xyz_m": [0.00016, 0.00015, 0.00006]
+  }
+}
