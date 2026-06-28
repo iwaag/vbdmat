@@ -38,6 +38,10 @@ def main() -> None:
             ],
             check=True,
         )
+        if not png.is_file():
+            raise RuntimeError(
+                f"Blender exited without producing the expected render: {png}"
+            )
         records.append(
             {
                 "fixture": name,

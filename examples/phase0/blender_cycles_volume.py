@@ -71,12 +71,15 @@ def main() -> None:
     scene.cycles.samples = int(cycles["samples"])
     scene.cycles.seed = int(cycles["seed"])
     scene.cycles.max_bounces = int(cycles["max_bounces"])
+    scene.cycles.use_denoising = False
+    bpy.context.view_layer.cycles.use_denoising = False
     scene.render.resolution_x = int(cycles["width"])
     scene.render.resolution_y = int(cycles["height"])
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = "PNG"
     scene.render.filepath = str(output_path)
     scene.render.film_transparent = False
+    scene.world = bpy.data.worlds.new("vbdmat-world")
     scene.world.color = (0.02, 0.02, 0.02)
     scene.unit_settings.system = "METRIC"
     scene.unit_settings.scale_length = 1.0
@@ -84,6 +87,8 @@ def main() -> None:
     volume = bpy.data.volumes.new("vbdmat-volume")
     volume.filepath = str(vdb_path)
     volume.is_sequence = False
+    if not volume.grids.load():
+        raise RuntimeError(f"failed to load VDB grids: {volume.grids.error_message}")
     volume_obj = bpy.data.objects.new("vbdmat-volume", volume)
     scene.collection.objects.link(volume_obj)
 
@@ -134,8 +139,8 @@ def main() -> None:
     required = {"cycles_absorption", "cycles_scattering"}
     if not required <= available:
         raise RuntimeError(f"missing VDB grids: {sorted(required - available)}")
-    bpy.ops.wm.save_as_mainfile(filepath=str(output_path.with_suffix(".blend")))
     bpy.ops.render.render(write_still=True)
+    bpy.ops.wm.save_as_mainfile(filepath=str(output_path.with_suffix(".blend")))
 
 
 if __name__ == "__main__":

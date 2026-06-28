@@ -7,7 +7,10 @@ from vbdmat.exporters.openvdb import export_openvdb
 from vbdmat.fixtures import anisotropic_axis_marker
 from vbdmat.optics import map_material_volume_to_optical, phase0_provisional_mapping
 
-vdb = pytest.importorskip("openvdb")
+try:
+    import openvdb as vdb
+except ModuleNotFoundError:
+    vdb = pytest.importorskip("pyopenvdb")
 
 pytestmark = pytest.mark.openvdb
 
@@ -21,8 +24,9 @@ def test_written_grids_round_trip_names_values_dimensions_and_transform(
     )
     result = export_openvdb(volume, tmp_path, name="axis-marker")
     grids = vdb.readAll(str(result.vdb_path))[0]
-    assert tuple(grid.name for grid in grids) == result.grid_names
+    assert {grid.name for grid in grids} == set(result.grid_names)
     assert all(grid.__class__.__name__ == "FloatGrid" for grid in grids)
+    assert all(grid.gridClass == "fog volume" for grid in grids)
     assert all(grid.evalActiveVoxelBoundingBox()[1] <= (3, 2, 1) for grid in grids)
     by_name = {grid.name: grid for grid in grids}
     assert by_name["sigma_a_g"].getConstAccessor().getValue((3, 0, 0)) == pytest.approx(

@@ -237,6 +237,7 @@ def export_openvdb(
         grid = vdb.FloatGrid()
         grid.name = grid_name
         grid.creator = f"{OPENVDB_ADAPTER} {OPENVDB_ADAPTER_VERSION}"
+        grid.gridClass = "fog volume"
         grid.transform = transform.copy() if hasattr(transform, "copy") else transform
         grid.copyFromArray(np.asarray(array), tolerance=0.0)
         grid["vbdmat:unit"] = (

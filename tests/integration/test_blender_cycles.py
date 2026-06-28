@@ -9,7 +9,10 @@ from vbdmat.exporters.openvdb import OpenVDBExportConfig, export_openvdb
 from vbdmat.fixtures import all_synthetic_fixtures
 from vbdmat.optics import map_material_volume_to_optical, phase0_provisional_mapping
 
-pytest.importorskip("openvdb")
+try:
+    import openvdb  # noqa: F401
+except ModuleNotFoundError:
+    pytest.importorskip("pyopenvdb")
 BLENDER = shutil.which("blender")
 if BLENDER is None:
     pytest.skip("Blender executable is unavailable", allow_module_level=True)

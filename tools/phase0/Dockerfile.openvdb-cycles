@@ -1,0 +1,25 @@
+FROM ubuntu:24.04
+
+ARG BLENDER_VERSION=4.5.11
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        blender \
+        ca-certificates \
+        curl \
+        libice6 \
+        libsm6 \
+        python3-numpy \
+        python3-openvdb \
+        python3-pytest \
+        xz-utils \
+    && curl -fsSLo /tmp/blender.tar.xz \
+        "https://download.blender.org/release/Blender4.5/blender-${BLENDER_VERSION}-linux-x64.tar.xz" \
+    && mkdir -p /opt/blender \
+    && tar -xJf /tmp/blender.tar.xz --strip-components=1 -C /opt/blender \
+    && rm -f /tmp/blender.tar.xz \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH=/opt/blender:${PATH}
+WORKDIR /work
