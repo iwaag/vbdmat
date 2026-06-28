@@ -69,6 +69,8 @@ src/vbdmat/
     transforms.py
     validation.py
     volumes.py
+  fixtures/
+    synthetic.py
 tests/
 ```
 
@@ -77,6 +79,16 @@ types, schema and provenance metadata, `MaterialLabelVolume`,
 `MaterialMixtureVolume`, `OpticalPropertyVolume`, and structured volume
 validation errors. Persistence and renderer I/O remain intentionally
 unimplemented until their Phase 0 steps.
+
+Generate and inspect the small deterministic Phase 0 fixtures with:
+
+```bash
+uv run python examples/phase0/inspect_synthetic_fixtures.py
+```
+
+The fixture set covers homogeneous transparent and white commands, a sharp
+transparent/opaque interface, a layered slab, a two-material mixture ramp, and
+an anisotropic axis marker.
 
 ## Phase 0 design contracts
 
