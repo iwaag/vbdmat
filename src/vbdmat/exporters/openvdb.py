@@ -30,6 +30,10 @@ class OpenVDBExportError(RuntimeError):
     """OpenVDB conversion or file export failed."""
 
 
+class OpenVDBDependencyError(OpenVDBExportError):
+    """Compatible OpenVDB Python bindings are unavailable."""
+
+
 @dataclass(frozen=True, slots=True)
 class OpenVDBExportConfig:
     """Explicit Cycles proof settings and scalar RGB reduction policy."""
@@ -316,7 +320,7 @@ def _load_openvdb() -> ModuleType:
             return importlib.import_module(module_name)
         except ModuleNotFoundError:
             pass
-    raise OpenVDBExportError(
+    raise OpenVDBDependencyError(
         "OpenVDB Python bindings are unavailable; run in Blender's Python or "
-        "install a compatible pyopenvdb build"
+        "the pinned tools/phase0/Dockerfile.openvdb-cycles environment"
     )

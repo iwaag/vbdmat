@@ -5,6 +5,7 @@ from .mitsuba import (
     DEFAULT_MITSUBA_CONFIG,
     MITSUBA_ADAPTER,
     MITSUBA_ADAPTER_VERSION,
+    MitsubaDependencyError,
     MitsubaExportConfig,
     MitsubaExportError,
     MitsubaFieldConversion,
@@ -19,6 +20,7 @@ from .openvdb import (
     DEFAULT_OPENVDB_CONFIG,
     OPENVDB_ADAPTER,
     OPENVDB_ADAPTER_VERSION,
+    OpenVDBDependencyError,
     OpenVDBExportConfig,
     OpenVDBExportError,
     OpenVDBExportResult,
@@ -27,6 +29,7 @@ from .openvdb import (
     export_openvdb,
     openvdb_capability_report,
 )
+from .runner import ExportInputError, ExportOutcome, export_restored_optical
 
 __all__ = [
     "DEFAULT_MITSUBA_CONFIG",
@@ -37,10 +40,14 @@ __all__ = [
     "OPENVDB_ADAPTER_VERSION",
     "CapabilityEntry",
     "CapabilityReport",
+    "ExportInputError",
+    "ExportOutcome",
+    "MitsubaDependencyError",
     "MitsubaExportConfig",
     "MitsubaExportError",
     "MitsubaFieldConversion",
     "MitsubaRenderResult",
+    "OpenVDBDependencyError",
     "OpenVDBExportConfig",
     "OpenVDBExportError",
     "OpenVDBExportResult",
@@ -49,6 +56,7 @@ __all__ = [
     "convert_openvdb_fields",
     "convert_optical_fields",
     "export_openvdb",
+    "export_restored_optical",
     "mitsuba_capability_report",
     "openvdb_capability_report",
     "prepare_mitsuba_scene",

@@ -21,5 +21,15 @@ RUN apt-get update \
     && rm -f /tmp/blender.tar.xz \
     && rm -rf /var/lib/apt/lists/*
 
-ENV PATH=/opt/blender:${PATH}
+# The Phase 1 CLI restores Zarr before entering the native OpenVDB adapter. Keep the
+# ABI-coupled apt OpenVDB binding visible while adding the locked Python-side Zarr
+# reader in an isolated system-site-packages venv.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3-venv \
+    && python3 -m venv --system-site-packages /opt/vbdmat-venv \
+    && /opt/vbdmat-venv/bin/pip install --no-cache-dir \
+        "numpy==1.26.4" "zarr==3.0.10" \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH=/opt/vbdmat-venv/bin:/opt/blender:${PATH}
 WORKDIR /work

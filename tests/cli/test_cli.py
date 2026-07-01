@@ -162,7 +162,7 @@ def test_documented_exit_categories(inputs: Path, tmp_path: Path) -> None:
     )
     assert _run("convert", material, optical).returncode == 0
     conversion = _run("convert", optical, tmp_path / "not-material.zarr")
-    optional = _run("export", "mitsuba", optical, tmp_path / "export")
+    optional = _run("export", "openvdb", optical, tmp_path / "export")
 
     assert usage.returncode == 2
     assert validation.returncode == 3

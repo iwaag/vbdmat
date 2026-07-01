@@ -7,8 +7,10 @@ work is delegated to the package APIs fixed in Steps 2--6.
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import os
+import shutil
 import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -21,6 +23,15 @@ from vbdmat.core import (
     MaterialMixtureVolume,
     OpticalPropertyVolume,
     VolumeValidationError,
+)
+from vbdmat.exporters import (
+    ExportInputError,
+    ExportOutcome,
+    MitsubaDependencyError,
+    MitsubaExportError,
+    OpenVDBDependencyError,
+    OpenVDBExportError,
+    export_restored_optical,
 )
 from vbdmat.io import (
     MeshReadError,
@@ -138,6 +149,11 @@ def _parser() -> argparse.ArgumentParser:
     export_parser.add_argument("target", choices=("mitsuba", "openvdb"))
     export_parser.add_argument("optical_zarr", type=Path, metavar="OPTICAL_ZARR")
     export_parser.add_argument("output", type=Path, metavar="OUTPUT")
+    export_parser.add_argument(
+        "--render",
+        action="store_true",
+        help="render the prepared Mitsuba scene (Mitsuba only)",
+    )
     _writer_flags(export_parser)
     for command_parser in command_parsers:
         command_parser.epilog = _PROVISIONAL
@@ -269,13 +285,30 @@ def _dispatch(arguments: argparse.Namespace) -> dict[str, Any]:
                     {"name": item.name, "status": item.status.value}
                     for item in run_result.stages
                 ],
+                "export": run_result.manifest.get("export"),
             }
         if command == "export":
-            raise CliError(
-                ExitCode.OPTIONAL_DEPENDENCY,
-                f"{arguments.target} export is connected in Phase 1 Step 8; "
-                "the canonical optical asset is unchanged",
+            _refuse_overwrite(arguments.output, arguments.overwrite)
+            outcome = _atomic_export(
+                arguments.target,
+                arguments.optical_zarr,
+                arguments.output,
+                render=arguments.render,
+                overwrite=arguments.overwrite,
             )
+            document = {
+                "status": "ok",
+                "operation": "export",
+                "path": str(arguments.output),
+                "source": str(arguments.optical_zarr),
+                **outcome.to_dict(),
+            }
+            if arguments.target == "openvdb":
+                document["follow_up"] = (
+                    "Render openvdb-manifest.json with Blender/Cycles in the pinned "
+                    "tools/phase0/Dockerfile.openvdb-cycles environment."
+                )
+            return document
     except CliError:
         raise
     except FileExistsError as error:
@@ -293,6 +326,12 @@ def _dispatch(arguments: argparse.Namespace) -> dict[str, Any]:
         raise CliError(code, str(error)) from error
     except PipelineConfigError as error:
         raise CliError(ExitCode.VALIDATION, str(error)) from error
+    except (MitsubaDependencyError, OpenVDBDependencyError) as error:
+        raise CliError(ExitCode.OPTIONAL_DEPENDENCY, str(error)) from error
+    except ExportInputError as error:
+        raise CliError(ExitCode.CONVERSION, str(error)) from error
+    except (MitsubaExportError, OpenVDBExportError) as error:
+        raise CliError(ExitCode.CONVERSION, str(error)) from error
     except (OpticalMappingError, PipelineRunError) as error:
         if (
             isinstance(error, PipelineRunError)
@@ -324,6 +363,51 @@ def _refuse_overwrite(path: Path, overwrite: bool) -> None:
             ExitCode.USAGE,
             f"refusing to overwrite existing path: {path} (use --overwrite)",
         )
+
+
+def _atomic_export(
+    target: str,
+    source: Path,
+    output: Path,
+    *,
+    render: bool,
+    overwrite: bool,
+) -> ExportOutcome:
+    """Build an export aside and replace an authorized old result only on success."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = output.parent / f".{output.name}.tmp-export"
+    backup = output.parent / f".{output.name}.bak-export"
+    for generated in (temporary, backup):
+        if generated.is_dir():
+            shutil.rmtree(generated)
+        elif generated.exists():
+            generated.unlink()
+    try:
+        outcome = export_restored_optical(target, source, temporary, render=render)
+        if output.exists():
+            if not overwrite:  # protected by _refuse_overwrite; retains API invariant
+                raise FileExistsError(f"output already exists: {output}")
+            os.replace(output, backup)
+        try:
+            os.replace(temporary, output)
+        except BaseException:
+            if backup.exists() and not output.exists():
+                os.replace(backup, output)
+            raise
+        if backup.is_dir():
+            shutil.rmtree(backup)
+        elif backup.exists():
+            backup.unlink()
+    except BaseException:
+        if temporary.is_dir():
+            shutil.rmtree(temporary, ignore_errors=True)
+        elif temporary.exists():
+            temporary.unlink()
+        raise
+    artifacts = tuple(
+        output / path.relative_to(outcome.output_path) for path in outcome.artifacts
+    )
+    return dataclasses.replace(outcome, output_path=output, artifacts=artifacts)
 
 
 def _voxel_size(text: str) -> tuple[float, float, float]:
@@ -412,6 +496,8 @@ def _inspect_bundle(path: Path, *, validate: bool) -> dict[str, Any]:
         "schema": manifest.get("schema"),
         "run_id": manifest.get("run_id"),
         "stages": manifest.get("stages"),
+        "export": manifest.get("export"),
+        "versions": manifest.get("versions"),
         "summary": summary,
         "assets": assets,
         "validation": {

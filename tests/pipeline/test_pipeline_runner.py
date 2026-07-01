@@ -269,7 +269,15 @@ def test_two_identical_runs_have_equal_scientific_artifacts(inputs_dir: Path) ->
 # -- optional export ---------------------------------------------------------------
 
 
-def test_export_requested_without_backend_is_skipped(inputs_dir: Path) -> None:
+def test_default_export_backend_reports_missing_optional_dependency(
+    inputs_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def missing_export(target: ExportTarget, optical: Path, dest: Path) -> Any:
+        raise RuntimeError("Mitsuba bindings are unavailable")
+
+    monkeypatch.setattr(
+        "vbdmat.pipeline.runner._default_export_runner", missing_export
+    )
     config = _coupon_config(
         inputs_dir,
         "out/coupon",
@@ -278,9 +286,11 @@ def test_export_requested_without_backend_is_skipped(inputs_dir: Path) -> None:
     result = run_pipeline(config, base_dir=str(inputs_dir))
     export_stage = result.stages[-1]
     assert export_stage.name == "export"
-    assert export_stage.status is StageStatus.SKIPPED
+    assert export_stage.status is StageStatus.FAILED
     manifest = _load_manifest(result.output_path)
-    assert manifest["export"]["status"] == "skipped"
+    assert manifest["export"]["status"] == "failed"
+    assert "Mitsuba bindings are unavailable" in manifest["export"]["error"]
+    assert read_volume(result.output_path / "optical.zarr") is not None
 
 
 def test_export_failure_is_attributed_and_does_not_corrupt_canonical(
@@ -329,6 +339,12 @@ def test_successful_export_records_adapter_versions(inputs_dir: Path) -> None:
     manifest = _load_manifest(result.output_path)
     assert manifest["versions"]["exporters"]["mitsuba"]["adapter"] == "fake-mitsuba"
     assert (result.output_path / "exports" / "mitsuba" / "scene.txt").is_file()
+    exported = next(
+        item
+        for item in manifest["assets"]
+        if item["path"] == "exports/mitsuba/scene.txt"
+    )
+    assert exported["sha256"].startswith("sha256:")
 
 
 # -- validation stages -------------------------------------------------------------

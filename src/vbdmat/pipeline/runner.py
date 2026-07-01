@@ -63,7 +63,7 @@ VALIDATION_NAME = "diagnostics/validation.json"
 SUMMARY_NAME = "diagnostics/summary.json"
 EXPORTS_DIR = "exports"
 
-#: Signature of an optional export backend (wired in Step 8). Given a target, the
+#: Signature of an optional export backend. Given a target, the
 #: published ``optical.zarr`` path, and a destination directory, it produces the export
 #: artifacts and returns adapter/version metadata recorded in ``run.json``.
 ExportRunner = Callable[[ExportTarget, Path, Path], Mapping[str, Any]]
@@ -509,23 +509,14 @@ def _run_exports(
     export_runner: ExportRunner | None,
 ) -> tuple[tuple[StageRecord, ...], dict[str, Any]]:
     if export_runner is None:
-        # Export backends are wired in Step 8; until then a requested export is
-        # deferred rather than silently claimed as done.
-        stages = _stage_records(
-            first_stage, config, StageStatus.SKIPPED
-        )
-        manifest["stages"] = [
-            {"name": item.name, "status": item.status.value} for item in stages
-        ]
-        manifest.setdefault("export", {})["status"] = StageStatus.SKIPPED.value
-        manifest["export"]["reason"] = "no export backend configured"
-        _rewrite_manifest(output_path, manifest)
-        return stages, manifest
+        export_runner = _default_export_runner
 
     exports_dir = output_path / EXPORTS_DIR
     optical_zarr = output_path / OPTICAL_ZARR
     status = StageStatus.OK
     export_versions: dict[str, Any] = {}
+    export_results: dict[str, Any] = {}
+    exported_assets: list[dict[str, Any]] = []
     error_message: str | None = None
     for export in config.exports:
         target = export.target
@@ -536,20 +527,50 @@ def _run_exports(
         except Exception as error:
             status = StageStatus.FAILED
             error_message = f"{target.value}: {error}"
+            shutil.rmtree(destination, ignore_errors=True)
             break
-        export_versions[target.value] = dict(info)
+        result = dict(info)
+        export_results[target.value] = result
+        export_versions[target.value] = {
+            "adapter": result.get("adapter"),
+            "adapter_version": result.get("adapter_version"),
+            "renderer": result.get("renderer"),
+        }
+        exported_assets.extend(
+            _asset_entry(output_path, item)
+            for item in sorted(destination.rglob("*"))
+            if item.is_file()
+        )
 
     stages = _stage_records(first_stage, config, status)
     manifest["stages"] = [
         {"name": item.name, "status": item.status.value} for item in stages
     ]
     manifest.setdefault("versions", {})["exporters"] = export_versions
-    export_state: dict[str, Any] = {"status": status.value}
+    manifest["assets"] = sorted(
+        [*manifest.get("assets", []), *exported_assets],
+        key=lambda entry: entry["path"],
+    )
+    manifest.setdefault("provenance", {})["exports"] = export_results
+    export_state: dict[str, Any] = {
+        "status": status.value,
+        "targets": export_results,
+    }
     if error_message is not None:
         export_state["error"] = error_message
     manifest["export"] = export_state
     _rewrite_manifest(output_path, manifest)
     return stages, manifest
+
+
+def _default_export_runner(
+    target: ExportTarget, optical_zarr: Path, destination: Path
+) -> Mapping[str, Any]:
+    """Dispatch below the pipeline boundary without importing renderer bindings."""
+    from vbdmat.exporters import export_restored_optical
+
+    outcome = export_restored_optical(target.value, optical_zarr, destination)
+    return outcome.to_dict()
 
 
 def _rewrite_manifest(output_path: Path, manifest: Mapping[str, Any]) -> None:

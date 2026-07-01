@@ -42,6 +42,10 @@ class MitsubaExportError(RuntimeError):
     """Mitsuba conversion, scene construction, or rendering failed."""
 
 
+class MitsubaDependencyError(MitsubaExportError):
+    """The requested Mitsuba runtime or variant is unavailable."""
+
+
 @dataclass(frozen=True, slots=True)
 class MitsubaExportConfig:
     """Fixed and explicit scene settings for the Phase 0 proof."""
@@ -267,8 +271,8 @@ def prepare_mitsuba_scene(
     conversion = convert_optical_fields(volume, config)
     report = mitsuba_capability_report(volume, conversion)
     output = Path(output_directory)
-    output.mkdir(parents=True, exist_ok=True)
     mi = _load_mitsuba(config.variant)
+    output.mkdir(parents=True, exist_ok=True)
     transform = mi.ScalarTransform4f(
         np.asarray(conversion.volume_to_world, dtype=np.float32)
     )
@@ -411,11 +415,11 @@ def _load_mitsuba(variant: str) -> ModuleType:
     try:
         mi = importlib.import_module("mitsuba")
     except ImportError as error:
-        raise MitsubaExportError(
+        raise MitsubaDependencyError(
             "Mitsuba bindings are unavailable; run with `uv run --group mitsuba`"
         ) from error
     if variant not in mi.variants():
-        raise MitsubaExportError(f"Mitsuba variant is unavailable: {variant}")
+        raise MitsubaDependencyError(f"Mitsuba variant is unavailable: {variant}")
     if mi.variant() != variant:
         mi.set_variant(variant)
     return mi
