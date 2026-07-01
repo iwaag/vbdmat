@@ -17,7 +17,7 @@
     "exports": []
   },
   "output": {
-    "path": "runs/window_coupon",
+    "path": "../../../.local/phase1/quickstart/window_coupon",
     "overwrite": false
   },
   "execution": {

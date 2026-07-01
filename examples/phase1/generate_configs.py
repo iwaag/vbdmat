@@ -29,7 +29,7 @@ def window_coupon_config() -> PipelineConfig:
     return PipelineConfig(
         input_kind=InputKind.DIRECT_VOXEL,
         input_path="../inputs/window_coupon.voxels.json",
-        output_path="runs/window_coupon",
+        output_path="../../../.local/phase1/quickstart/window_coupon",
     )
 
 
@@ -38,7 +38,7 @@ def stepped_wedge_config() -> PipelineConfig:
     return PipelineConfig(
         input_kind=InputKind.MESH,
         input_path="../inputs/stepped_wedge.stl",
-        output_path="runs/stepped_wedge",
+        output_path="../../../.local/phase1/quickstart/stepped_wedge",
         voxelization=MeshVoxelizationSettings(
             source_unit="mm",
             voxel_size_xyz_m=(0.001, 0.001, 0.001),

@@ -1,6 +1,6 @@
 # ADR-007: Pipeline Run and Artifact Bundle
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-07-01
 - **Decision owners:** VBDMAT maintainers
 - **Phase:** 1, Step 1

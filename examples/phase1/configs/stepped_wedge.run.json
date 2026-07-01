@@ -54,7 +54,7 @@
     "exports": []
   },
   "output": {
-    "path": "runs/stepped_wedge",
+    "path": "../../../.local/phase1/quickstart/stepped_wedge",
     "overwrite": false
   },
   "execution": {

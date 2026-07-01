@@ -1,6 +1,6 @@
 # ADR-006: Phase 1 Inputs and Voxelization
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-07-01
 - **Decision owners:** VBDMAT maintainers
 - **Phase:** 1, Step 1

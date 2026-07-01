@@ -4,10 +4,11 @@ VBDMAT is a renderer-independent preprocessing backend for voxel-based
 material-jetting appearance research. The project will convert material voxel
 data into explicit optical-property volumes for downstream renderers.
 
-Phase 0 is complete: it establishes volume schemas, physical conventions,
-persistence, and renderer interoperability proofs. The
-[feasibility report](docs/phase0-feasibility-report.md) recommends proceeding to
-Phase 1 without revising those foundations.
+Phase 1 is complete: it adds explicit direct-voxel and watertight STL inputs, dense
+reference voxelization, deterministic run bundles, an installed CLI, and reproducible
+renderer baselines to the Phase 0 foundations. See the
+[Phase 1 research MVP report](docs/phase1-research-mvp-report.md) for supported scope,
+evidence, and limitations.
 
 ## Architecture
 
@@ -74,6 +75,41 @@ The OpenVDB group is empty because compatible Python bindings and Blender are
 provided by the isolated integration container documented in
 [the OpenVDB/Cycles proof](docs/openvdb/phase0-cycles-proof.md).
 
+## Phase 1 quickstart
+
+Optical coefficients are provisional and uncalibrated. These commands verify the
+software workflow; they do not predict a physical print.
+
+Synchronize the locked environment, clear previous quickstart output, then run both
+complete canonical pipelines:
+
+```bash
+uv sync --locked
+rm -rf .local/phase1/quickstart
+
+uv run vbdmat run examples/phase1/configs/window_coupon.run.json
+uv run vbdmat validate .local/phase1/quickstart/window_coupon --json
+
+uv run vbdmat run examples/phase1/configs/stepped_wedge.run.json
+uv run vbdmat validate .local/phase1/quickstart/stepped_wedge --json
+```
+
+The first config imports the versioned JSON + NumPy multi-material coupon. The second
+reads a watertight single-solid STL and explicitly declares millimetre source units,
+1 mm voxels, and material ID 1. Each output bundle contains copied source data,
+`material.zarr`, `optical.zarr`, validation and summary diagnostics, configuration,
+provenance, and checksums. Inspect either bundle with:
+
+```bash
+uv run vbdmat inspect .local/phase1/quickstart/window_coupon --json
+uv run vbdmat inspect .local/phase1/quickstart/stepped_wedge --json
+```
+
+Optional Mitsuba and OpenVDB/Cycles export commands are documented in the
+[Phase 1 export workflow](docs/phase1-export-workflow.md). Input contracts, command
+failures, and exit codes are documented in [ADR-006](docs/adr/0006-phase1-inputs-and-voxelization.md)
+and [ADR-008](docs/adr/0008-cli-contract-and-failure-semantics.md).
+
 ## Fixture demo
 
 Run the complete renderer-independent fixture path:
@@ -91,7 +127,7 @@ materials, a mixture ramp, and anisotropic XYZ axis markers.
 
 ## Current package
 
-The package currently exposes the Phase 0 core foundation:
+The package exposes the Phase 0 core foundation and the Phase 1 workflow:
 
 ```text
 src/vbdmat/
@@ -106,12 +142,23 @@ src/vbdmat/
     validation.py
     volumes.py
   fixtures/
+    phase1.py
     synthetic.py
   optics/
     config.py
     mapping.py
   io/
+    mesh.py
+    voxel_manifest.py
     zarr.py
+  voxelize/
+    mesh.py
+  pipeline/
+    artifacts.py
+    config.py
+    runner.py
+  cli/
+    main.py
   boundaries/
     interfaces.py
     policies.py
