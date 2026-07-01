@@ -1,0 +1,64 @@
+{
+  "schema": {
+    "name": "vbdmat.pipeline-config",
+    "version": "1.0.0"
+  },
+  "input": {
+    "kind": "mesh",
+    "path": "../inputs/stepped_wedge.stl",
+    "voxelization": {
+      "source_unit": "mm",
+      "voxel_size_xyz_m": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "material_id": 1,
+      "material_name": "transparent-resin",
+      "placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "padding_cells": 1
+    }
+  },
+  "mapping": {
+    "name": "phase0-provisional-materials-v1",
+    "digest": "sha256:da83581c56ca175bf5888de2650cc84020602f56d8de9111d0bbefb5033252eb"
+  },
+  "stages": {
+    "validate_material": true,
+    "validate_optical": true,
+    "exports": []
+  },
+  "output": {
+    "path": "runs/stepped_wedge",
+    "overwrite": false
+  },
+  "execution": {
+    "random_seed": 0
+  },
+  "renderer": null
+}

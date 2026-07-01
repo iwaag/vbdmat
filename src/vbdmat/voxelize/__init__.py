@@ -2,6 +2,7 @@
 
 from .errors import MeshTopologyError, VoxelizationError
 from .mesh import (
+    SUPPORTED_MESH_UNITS,
     VoxelizationDiagnostics,
     VoxelizationResult,
     inspect_topology,
@@ -9,6 +10,7 @@ from .mesh import (
 )
 
 __all__ = [
+    "SUPPORTED_MESH_UNITS",
     "MeshTopologyError",
     "VoxelizationDiagnostics",
     "VoxelizationError",

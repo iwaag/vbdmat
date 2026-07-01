@@ -30,6 +30,8 @@ from vbdmat.io.mesh import RawMesh
 from .errors import MeshTopologyError, VoxelizationError
 
 _UNIT_TO_METRES = {"m": 1.0, "mm": 1.0e-3}
+#: Source units the mesh voxelizer accepts, exposed for config-time validation.
+SUPPORTED_MESH_UNITS: tuple[str, ...] = tuple(sorted(_UNIT_TO_METRES))
 _BARYCENTRIC_TOLERANCE = 1e-9
 # Distinct sub-voxel Y/Z offsets (fractions of a voxel). They must differ so that
 # cell centres with equal Y and Z do not stay on a 45-degree triangulation diagonal.
