@@ -105,9 +105,7 @@ def test_provenance_records_format_and_checksum(coupon: Path) -> None:
 def test_repeated_reads_are_structurally_equal(coupon: Path) -> None:
     first = read_material_label_manifest(coupon)
     second = read_material_label_manifest(coupon)
-    assert np.array_equal(
-        np.asarray(first.material_id), np.asarray(second.material_id)
-    )
+    assert np.array_equal(np.asarray(first.material_id), np.asarray(second.material_id))
     assert first.geometry == second.geometry
     assert first.palette.material_ids == second.palette.material_ids
     assert first.provenance.sources == second.provenance.sources

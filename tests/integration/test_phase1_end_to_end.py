@@ -128,9 +128,7 @@ def test_optical_reads_are_independent_of_requested_chunk_partition(
     )
     path = tmp_path / "optical.zarr"
     write_volume(path, optical)
-    whole = read_optical_region(
-        path, (slice(None), slice(None), slice(None))
-    )
+    whole = read_optical_region(path, (slice(None), slice(None), slice(None)))
 
     for field in ("sigma_a", "sigma_s", "g", "ior"):
         expected = getattr(whole, field)

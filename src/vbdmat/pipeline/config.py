@@ -331,9 +331,7 @@ class PipelineConfig:
             raise PipelineConfigError("execution.random_seed", "must be an integer")
         object.__setattr__(self, "random_seed", int(self.random_seed))
 
-        if self.renderer is not None and not isinstance(
-            self.renderer, RendererConfig
-        ):
+        if self.renderer is not None and not isinstance(self.renderer, RendererConfig):
             raise PipelineConfigError("renderer", "must be a RendererConfig or None")
 
     # -- Mapping resolution ------------------------------------------------------

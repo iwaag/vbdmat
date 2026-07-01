@@ -155,9 +155,7 @@ def run_pipeline(
 
         # config.json is the exact canonical configuration, so its file checksum is
         # the config_digest by construction.
-        (temporary / CONFIG_NAME).write_text(
-            config.canonical_json(), encoding="utf-8"
-        )
+        (temporary / CONFIG_NAME).write_text(config.canonical_json(), encoding="utf-8")
 
         stage = first_stage
         source_files = copy_source(temporary / SOURCE_DIR)
@@ -197,9 +195,7 @@ def run_pipeline(
             encoding="utf-8",
         )
 
-        stages = _stage_records(
-            first_stage, config, StageStatus.SKIPPED
-        )
+        stages = _stage_records(first_stage, config, StageStatus.SKIPPED)
         manifest = _build_manifest(
             temporary,
             config=config,
@@ -313,9 +309,7 @@ def _load_mesh(
     return result.volume, payload_sha256, copy_source
 
 
-def _restamp(
-    volume: Any, config_digest: str, extra_sources: tuple[str, ...]
-) -> Any:
+def _restamp(volume: Any, config_digest: str, extra_sources: tuple[str, ...]) -> Any:
     """Chain provenance: stamp the run config digest and add upstream sources (D6)."""
     provenance = volume.provenance
     sources = tuple(provenance.sources)
@@ -333,9 +327,7 @@ def _restamp(
     return dataclasses.replace(volume, provenance=stamped)
 
 
-def _validate(
-    zarr_path: Path, enabled: bool, asset_type: str
-) -> dict[str, Any]:
+def _validate(zarr_path: Path, enabled: bool, asset_type: str) -> dict[str, Any]:
     """Validate a persisted asset by fully reading it back (ADR-007 D7)."""
     schema = "vbdmat.volume/1.0.0"
     entry: dict[str, Any] = {

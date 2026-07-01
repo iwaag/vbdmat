@@ -160,9 +160,7 @@ def _load_manifest(path: str | Path) -> tuple[Mapping[str, Any], Path]:
 
     unknown = set(document) - _ALLOWED_TOP_LEVEL
     if unknown:
-        raise VoxelManifestError(
-            "manifest", f"unknown fields: {sorted(unknown)}"
-        )
+        raise VoxelManifestError("manifest", f"unknown fields: {sorted(unknown)}")
     required = {
         "format",
         "format_version",
@@ -391,9 +389,7 @@ def _require_dimensions(payload: Mapping[str, Any]) -> None:
         )
 
 
-def _read_payload_bytes(
-    manifest_dir: Path, payload: Mapping[str, Any]
-) -> bytes:
+def _read_payload_bytes(manifest_dir: Path, payload: Mapping[str, Any]) -> bytes:
     relative = _string(payload, "payload.path")
     resolved = _resolve_payload_path(manifest_dir, relative)
     try:

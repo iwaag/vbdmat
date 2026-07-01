@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import struct
 import zlib
@@ -169,6 +170,15 @@ def check_png_sanity(
     if value_range == 0:
         return False, "PNG is spatially flat"
     return True, f"{width}x{height}, channels={channels}, byte range={value_range}"
+
+
+def png_pixel_sha256(path: str | Path) -> str:
+    """Hash decoded PNG pixels, excluding encoder metadata and compression bytes."""
+    width, height, channels, pixels = _read_png(Path(path))
+    digest = hashlib.sha256()
+    digest.update(struct.pack(">III", width, height, channels))
+    digest.update(pixels.tobytes(order="C"))
+    return f"sha256:{digest.hexdigest()}"
 
 
 def image_sanity_check(

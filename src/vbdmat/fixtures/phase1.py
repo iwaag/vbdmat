@@ -63,9 +63,7 @@ class BoxRegion:
     def cell_count(self) -> int:
         """Return the number of cells in the box."""
         return (
-            (self.z[1] - self.z[0])
-            * (self.y[1] - self.y[0])
-            * (self.x[1] - self.x[0])
+            (self.z[1] - self.z[0]) * (self.y[1] - self.y[0]) * (self.x[1] - self.x[0])
         )
 
     @property
@@ -231,11 +229,13 @@ def _wedge_profile_xz() -> list[tuple[float, float]]:
     return profile
 
 
-def stepped_wedge_triangles() -> list[tuple[
-    tuple[float, float, float],
-    tuple[float, float, float],
-    tuple[float, float, float],
-]]:
+def stepped_wedge_triangles() -> list[
+    tuple[
+        tuple[float, float, float],
+        tuple[float, float, float],
+        tuple[float, float, float],
+    ]
+]:
     """Return the watertight stepped-wedge triangles in millimetres.
 
     The solid is the staircase profile extruded along +Y. Walls follow the profile
@@ -250,11 +250,13 @@ def stepped_wedge_triangles() -> list[tuple[
     front = [(x, 0.0, z) for (x, z) in profile]
     back = [(x, depth, z) for (x, z) in profile]
 
-    triangles: list[tuple[
-        tuple[float, float, float],
-        tuple[float, float, float],
-        tuple[float, float, float],
-    ]] = []
+    triangles: list[
+        tuple[
+            tuple[float, float, float],
+            tuple[float, float, float],
+            tuple[float, float, float],
+        ]
+    ] = []
     for i in range(n):
         j = (i + 1) % n
         triangles.append((front[i], front[j], back[j]))
@@ -275,9 +277,7 @@ def stepped_wedge_stl_bytes() -> bytes:
         lines.append("facet normal 0 0 0")
         lines.append("outer loop")
         for vertex in (a, b, c):
-            lines.append(
-                f"vertex {vertex[0]:.6f} {vertex[1]:.6f} {vertex[2]:.6f}"
-            )
+            lines.append(f"vertex {vertex[0]:.6f} {vertex[1]:.6f} {vertex[2]:.6f}")
         lines.append("endloop")
         lines.append("endfacet")
     lines.append("endsolid stepped_wedge")
@@ -291,9 +291,7 @@ def stepped_wedge_summary() -> WedgeSummary:
     rise_cells = int(_WEDGE_RISE_MM)
     depth_cells = int(_WEDGE_DEPTH_MM)
     # Step k spans a run of cells, height (rise * k) cells, depth cells.
-    per_step = {
-        k: run_cells * depth_cells * (rise_cells * k) for k in range(1, n + 1)
-    }
+    per_step = {k: run_cells * depth_cells * (rise_cells * k) for k in range(1, n + 1)}
     occupied = sum(per_step.values())
     # Padding of one cell each side: interior 16x6x8 mm grid becomes 18x8x10.
     shape_x = n * run_cells + 2

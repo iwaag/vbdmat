@@ -66,9 +66,7 @@ def _looks_like_binary(data: bytes) -> bool:
         return False
     count = struct.unpack_from("<I", data, _BINARY_HEADER_BYTES)[0]
     expected = (
-        _BINARY_HEADER_BYTES
-        + _BINARY_COUNT_BYTES
-        + count * _BINARY_TRIANGLE_BYTES
+        _BINARY_HEADER_BYTES + _BINARY_COUNT_BYTES + count * _BINARY_TRIANGLE_BYTES
     )
     if len(data) == expected:
         return True
@@ -85,9 +83,7 @@ _BINARY_RECORD = np.dtype(
 def _read_binary_stl(data: bytes) -> RawMesh:
     count = struct.unpack_from("<I", data, _BINARY_HEADER_BYTES)[0]
     expected = (
-        _BINARY_HEADER_BYTES
-        + _BINARY_COUNT_BYTES
-        + count * _BINARY_TRIANGLE_BYTES
+        _BINARY_HEADER_BYTES + _BINARY_COUNT_BYTES + count * _BINARY_TRIANGLE_BYTES
     )
     if len(data) != expected:
         raise MeshReadError(

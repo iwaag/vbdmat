@@ -51,9 +51,7 @@ def _cube_triangles(lo: Vertex, hi: Vertex) -> list[tuple[Vertex, Vertex, Vertex
 def _binary_stl(triangles: Sequence[tuple[Vertex, Vertex, Vertex]]) -> bytes:
     data = struct.pack("<80sI", b"", len(triangles))
     for tri in triangles:
-        data += struct.pack(
-            "<12fH", 0.0, 0.0, 0.0, *tri[0], *tri[1], *tri[2], 0
-        )
+        data += struct.pack("<12fH", 0.0, 0.0, 0.0, *tri[0], *tri[1], *tri[2], 0)
     return data
 
 
@@ -123,9 +121,7 @@ def test_non_cubic_box_occupancy() -> None:
 
 def test_millimetre_and_metre_agree() -> None:
     in_mm = _voxelize_cube((0, 0, 0), (3, 3, 3), unit="mm")
-    in_m = _voxelize_cube(
-        (0.0, 0.0, 0.0), (0.003, 0.003, 0.003), unit="m"
-    )
+    in_m = _voxelize_cube((0.0, 0.0, 0.0), (0.003, 0.003, 0.003), unit="m")
     assert in_mm.diagnostics.shape_zyx == in_m.diagnostics.shape_zyx
     assert np.array_equal(
         np.asarray(in_mm.volume.material_id),
@@ -134,9 +130,7 @@ def test_millimetre_and_metre_agree() -> None:
 
 
 def test_anisotropic_voxel_size() -> None:
-    result = _voxelize_cube(
-        (0, 0, 0), (6, 6, 6), voxel_size=(0.002, 0.001, 0.001)
-    )
+    result = _voxelize_cube((0, 0, 0), (6, 6, 6), voxel_size=(0.002, 0.001, 0.001))
     # 6 mm cube: 3 cells along X (2 mm), 6 along Y and Z.
     assert result.diagnostics.occupied_cells == 3 * 6 * 6
 
@@ -203,9 +197,7 @@ def test_diagnostics_bounds() -> None:
     result = _voxelize_cube((0, 0, 0), (3, 3, 3))
     assert result.diagnostics.triangle_count == 12
     assert result.diagnostics.bounds_min_xyz_m == pytest.approx((0.0, 0.0, 0.0))
-    assert result.diagnostics.bounds_max_xyz_m == pytest.approx(
-        (0.003, 0.003, 0.003)
-    )
+    assert result.diagnostics.bounds_max_xyz_m == pytest.approx((0.003, 0.003, 0.003))
 
 
 def test_open_mesh_is_rejected() -> None:

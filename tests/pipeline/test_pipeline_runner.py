@@ -162,12 +162,9 @@ def test_provenance_links_input_mapping_and_config(inputs_dir: Path) -> None:
     assert material.provenance.configuration_digest == result.config_digest
     assert optical.provenance.configuration_digest == result.config_digest
     assert any(
-        result.input_payload_sha256 in source
-        for source in material.provenance.sources
+        result.input_payload_sha256 in source for source in material.provenance.sources
     )
-    assert any(
-        result.mapping_digest in source for source in optical.provenance.sources
-    )
+    assert any(result.mapping_digest in source for source in optical.provenance.sources)
 
     provenance = result.manifest["provenance"]
     assert provenance["input"]["payload_sha256"] == result.input_payload_sha256
@@ -275,9 +272,7 @@ def test_default_export_backend_reports_missing_optional_dependency(
     def missing_export(target: ExportTarget, optical: Path, dest: Path) -> Any:
         raise RuntimeError("Mitsuba bindings are unavailable")
 
-    monkeypatch.setattr(
-        "vbdmat.pipeline.runner._default_export_runner", missing_export
-    )
+    monkeypatch.setattr("vbdmat.pipeline.runner._default_export_runner", missing_export)
     config = _coupon_config(
         inputs_dir,
         "out/coupon",
@@ -332,9 +327,7 @@ def test_successful_export_records_adapter_versions(inputs_dir: Path) -> None:
         (dest / "scene.txt").write_text("scene", encoding="utf-8")
         return {"adapter": "fake-mitsuba", "version": "0.0.1"}
 
-    result = run_pipeline(
-        config, base_dir=str(inputs_dir), export_runner=fake_export
-    )
+    result = run_pipeline(config, base_dir=str(inputs_dir), export_runner=fake_export)
     assert result.stages[-1].status is StageStatus.OK
     manifest = _load_manifest(result.output_path)
     assert manifest["versions"]["exporters"]["mitsuba"]["adapter"] == "fake-mitsuba"

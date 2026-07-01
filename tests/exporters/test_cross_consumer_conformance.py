@@ -15,6 +15,7 @@ from vbdmat.conformance import (
     ConformanceLayer,
     check_fixture_conformance,
     check_png_sanity,
+    png_pixel_sha256,
 )
 from vbdmat.fixtures import all_synthetic_fixtures, layered_material_slab
 from vbdmat.optics import map_material_volume_to_optical, phase0_provisional_mapping
@@ -70,6 +71,17 @@ def test_png_sanity_rejects_flat_image_and_accepts_spatial_signal(
     assert not check_png_sanity(varied, expected_size=(2, 3))[0]
 
 
+def test_png_pixel_hash_ignores_compression_bytes(tmp_path: Path) -> None:
+    first = tmp_path / "first.png"
+    second = tmp_path / "second.png"
+    pixels = np.arange(18, dtype=np.uint8).reshape(2, 3, 3)
+    _write_rgb_png(first, pixels, compression_level=1)
+    _write_rgb_png(second, pixels, compression_level=9)
+
+    assert first.read_bytes() != second.read_bytes()
+    assert png_pixel_sha256(first) == png_pixel_sha256(second)
+
+
 def test_conformance_command_processes_every_fixture(tmp_path: Path) -> None:
     report = tmp_path / "report.json"
     subprocess.run(
@@ -86,7 +98,9 @@ def test_conformance_command_processes_every_fixture(tmp_path: Path) -> None:
     assert payload["failure_count"] == 0
 
 
-def _write_rgb_png(path: Path, pixels: np.ndarray) -> None:  # type: ignore[type-arg]
+def _write_rgb_png(
+    path: Path, pixels: np.ndarray, *, compression_level: int = -1
+) -> None:  # type: ignore[type-arg]
     height, width, _ = pixels.shape
     raw = b"".join(b"\x00" + pixels[row].tobytes() for row in range(height))
 
@@ -99,6 +113,6 @@ def _write_rgb_png(path: Path, pixels: np.ndarray) -> None:  # type: ignore[type
     path.write_bytes(
         b"\x89PNG\r\n\x1a\n"
         + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
-        + chunk(b"IDAT", zlib.compress(raw))
+        + chunk(b"IDAT", zlib.compress(raw, level=compression_level))
         + chunk(b"IEND", b"")
     )

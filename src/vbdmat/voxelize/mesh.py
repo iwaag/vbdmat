@@ -402,9 +402,7 @@ def _unit_factor(source_unit: str) -> float:
 def _voxel_size(voxel_size_xyz_m: Sequence[float]) -> tuple[float, float, float]:
     values = tuple(voxel_size_xyz_m)
     if len(values) != 3:
-        raise VoxelizationError(
-            "voxel_size_xyz_m", "must contain exactly 3 numbers"
-        )
+        raise VoxelizationError("voxel_size_xyz_m", "must contain exactly 3 numbers")
     result: list[float] = []
     for axis, item in zip(("x", "y", "z"), values, strict=True):
         if isinstance(item, bool) or not isinstance(item, (int, float)):

@@ -78,9 +78,7 @@ def test_coupon_matches_committed_summary() -> None:
     assert list(volume.geometry.voxel_size_xyz_m) == expected["voxel_size_xyz_m"]
 
     ids, counts = np.unique(label, return_counts=True)
-    actual_counts = {
-        int(i): int(c) for i, c in zip(ids, counts, strict=True)
-    }
+    actual_counts = {int(i): int(c) for i, c in zip(ids, counts, strict=True)}
     expected_counts = {
         int(k): v for k, v in expected["material_counts"].items() if v > 0
     }
