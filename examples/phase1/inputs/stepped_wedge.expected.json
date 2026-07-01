@@ -1,0 +1,32 @@
+{
+  "bounds_max_xyz_m": [
+    0.016,
+    0.006,
+    0.008
+  ],
+  "bounds_min_xyz_m": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "material_id": 1,
+  "occupied_cells": 480,
+  "per_step_occupied": {
+    "1": 48,
+    "2": 96,
+    "3": 144,
+    "4": 192
+  },
+  "shape_zyx": [
+    10,
+    8,
+    18
+  ],
+  "source_unit": "mm",
+  "triangle_count": 36,
+  "voxel_size_xyz_m": [
+    0.001,
+    0.001,
+    0.001
+  ]
+}

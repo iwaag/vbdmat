@@ -1,0 +1,79 @@
+{
+  "format": "vbdmat.voxels",
+  "format_version": "1.0.0",
+  "asset_type": "material-label",
+  "payload": {
+    "path": "window_coupon.material_id.npy",
+    "sha256": "fc9c3b362d692f4066f158f2b43dc1c44ffc84bb1eb9f3d31a5593be3b372e0b",
+    "dtype": "uint16",
+    "dimensions": [
+      "z",
+      "y",
+      "x"
+    ]
+  },
+  "shape_zyx": [
+    12,
+    16,
+    20
+  ],
+  "voxel_size_xyz_m": [
+    0.0005,
+    0.0004,
+    0.0003
+  ],
+  "local_to_world": [
+    [
+      1,
+      0,
+      0,
+      0.01
+    ],
+    [
+      0,
+      1,
+      0,
+      0.02
+    ],
+    [
+      0,
+      0,
+      1,
+      0.03
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ]
+  ],
+  "materials": [
+    {
+      "material_id": 0,
+      "name": "background",
+      "role": "background"
+    },
+    {
+      "material_id": 1,
+      "name": "transparent",
+      "role": "material"
+    },
+    {
+      "material_id": 2,
+      "name": "white",
+      "role": "material"
+    },
+    {
+      "material_id": 3,
+      "name": "black",
+      "role": "material"
+    }
+  ],
+  "source": {
+    "generator": "vbdmat.fixtures.phase1",
+    "generator_version": "1.0.0",
+    "identity": "window-coupon",
+    "notes": "Phase 1 multi-material window coupon; transparent matrix with an asymmetric white inclusion and black marker. Research fixture, not a printer-vendor format."
+  }
+}

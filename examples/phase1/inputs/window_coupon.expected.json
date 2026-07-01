@@ -1,0 +1,66 @@
+{
+  "black_marker": {
+    "cell_count": 18,
+    "material_id": 3,
+    "x": [
+      15,
+      18
+    ],
+    "y": [
+      11,
+      14
+    ],
+    "z": [
+      8,
+      10
+    ]
+  },
+  "bounds_max_xyz_m": [
+    0.02,
+    0.0264,
+    0.0336
+  ],
+  "bounds_min_xyz_m": [
+    0.01,
+    0.02,
+    0.03
+  ],
+  "local_to_world_translation_m": [
+    0.01,
+    0.02,
+    0.03
+  ],
+  "material_counts": {
+    "0": 0,
+    "1": 3750,
+    "2": 72,
+    "3": 18
+  },
+  "payload_sha256": "fc9c3b362d692f4066f158f2b43dc1c44ffc84bb1eb9f3d31a5593be3b372e0b",
+  "shape_zyx": [
+    12,
+    16,
+    20
+  ],
+  "voxel_size_xyz_m": [
+    0.0005,
+    0.0004,
+    0.0003
+  ],
+  "white_inclusion": {
+    "cell_count": 72,
+    "material_id": 2,
+    "x": [
+      4,
+      10
+    ],
+    "y": [
+      3,
+      7
+    ],
+    "z": [
+      2,
+      5
+    ]
+  }
+}
